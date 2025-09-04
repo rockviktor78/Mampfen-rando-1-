@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart Test</title>
+  </head>
+  <body>
+    <h1>Cart Test</h1>
+    <button onclick="testCartFunctions()">Test Cart Functions</button>
+    <div id="result"></div>
+
+    <script>
+      function testCartFunctions() {
+        const result = document.getElementById("result");
+
+        console.log("Testing cart functions...");
+        console.log("window.cartHandler:", window.cartHandler);
+        console.log("window.cartCore:", window.cartCore);
+        console.log("window.cartUI:", window.cartUI);
+
+        if (window.cartHandler) {
+          console.log("cartHandler methods:");
+          console.log("- addToCart:", typeof window.cartHandler.addToCart);
+          console.log(
+            "- increaseQuantity:",
+            typeof window.cartHandler.increaseQuantity
+          );
+          console.log(
+            "- decreaseQuantity:",
+            typeof window.cartHandler.decreaseQuantity
+          );
+          console.log(
+            "- removeItemFromCart:",
+            typeof window.cartHandler.removeItemFromCart
+          );
+        }
+
+        result.innerHTML = "<p>Check console for results</p>";
+      }
+    </script>
+
+    <!-- Load the modules in the same order as index.html -->
+    <script type="module" src="../scripts/includeHTML.js"></script>
+    <script type="module" src="../scripts/data.js"></script>
+    <script type="module" src="../scripts/storage.js"></script>
+
+    <!-- Cart modules -->
+    <script type="module" src="../scripts/cart-core.js"></script>
+    <script type="module" src="../scripts/cart-ui.js"></script>
+    <script type="module" src="../scripts/cart-events.js"></script>
+    <script type="module" src="../scripts/cart.js"></script>
+
+    <!-- Navigation modules -->
+    <script type="module" src="../scripts/navigation-mobile.js"></script>
+    <script type="module" src="../scripts/navigation-forms.js"></script>
+    <script type="module" src="../scripts/navigation-core.js"></script>
+    <script type="module" src="../scripts/navigation.js"></script>
+  </body>
+</html>
