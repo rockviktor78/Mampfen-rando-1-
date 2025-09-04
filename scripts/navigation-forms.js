@@ -76,12 +76,16 @@ let processContactFormSubmission = (formBtn, contactForm) => {
 let showSuccessPopup = () => {
   let popup = document.createElement("div");
   popup.className = "success-popup";
-  popup.innerHTML = `
-    <div class="success-popup_content success-popup_content--success">
-      <span class="success-popup_icon">✅</span>
-      <p class="success-popup_text">Nachricht erfolgreich gesendet!</p>
-    </div>
-  `;
+  if (window.templateHTML && window.templateHTML.getSuccessPopupHTML) {
+    popup.innerHTML = window.templateHTML.getSuccessPopupHTML();
+  } else {
+    popup.innerHTML = `
+      <div class="success-popup_content success-popup_content--success">
+        <span class="success-popup_icon">✅</span>
+        <p class="success-popup_text">Nachricht erfolgreich gesendet!</p>
+      </div>
+    `;
+  }
   showPopup(popup);
 };
 
@@ -92,12 +96,16 @@ let showSuccessPopup = () => {
 let showErrorPopup = (message) => {
   let popup = document.createElement("div");
   popup.className = "success-popup";
-  popup.innerHTML = `
-    <div class="success-popup_content success-popup_content--error">
-      <span class="success-popup_icon">❌</span>
-      <p class="success-popup_text">${message}</p>
-    </div>
-  `;
+  if (window.templateHTML && window.templateHTML.getErrorPopupHTML) {
+    popup.innerHTML = window.templateHTML.getErrorPopupHTML(message);
+  } else {
+    popup.innerHTML = `
+      <div class="success-popup_content success-popup_content--error">
+        <span class="success-popup_icon">❌</span>
+        <p class="success-popup_text">${message}</p>
+      </div>
+    `;
+  }
   showPopup(popup);
 };
 
