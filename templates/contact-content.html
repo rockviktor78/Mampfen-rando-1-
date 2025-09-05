@@ -27,13 +27,39 @@
       </div>
       <div class="contact_form">
         <h4>Nachricht senden</h4>
-        <form class="form">
-          <input type="text" placeholder="Name" class="form_input" />
-          <input type="email" placeholder="E-Mail" class="form_input" />
-          <textarea placeholder="Nachricht" class="form_textarea"></textarea>
+        <form action="https://formspree.io/f/mrbaovko" method="POST">
+          <label>
+            Your name:
+            <input
+              type="text"
+              placeholder="Name"
+              name="name"
+              class="form_input"
+            />
+          </label>
+          <label>
+            Your email:
+            <input
+              type="email"
+              placeholder="E-Mail"
+              name="email"
+              class="form_input"
+            />
+          </label>
+          <label>
+            Your message:
+            <textarea
+              type="text"
+              placeholder="Nachricht"
+              name="message"
+              class="form_textarea"
+            ></textarea>
+          </label>
+          <input type="hidden" name="_replyto" value="">
           <button type="submit" class="form_btn">Senden</button>
         </form>
       </div>
     </div>
   </div>
 </section>
+
