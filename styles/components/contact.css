@@ -94,6 +94,7 @@
   font-size: 1.125rem;
   font-family: inherit;
   transition: border-color 0.2s ease;
+  width: 100%;
 }
 
 .form_input:focus,
