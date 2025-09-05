@@ -102,12 +102,35 @@ let processCheckout = () => {
   let cart = window.cartCore.getCart();
   if (cart.length === 0) return;
 
+  // Lieferkosten prüfen
+  let distanceKm = parseFloat(localStorage.getItem("deliveryDistance")) || 2;
+  let orderValue = window.cartCore.getCartTotal();
+  let delivery = window.delivery
+    ? window.delivery.calculateDelivery(distanceKm, orderValue)
+    : null;
+  if (delivery && orderValue < delivery.minOrder) {
+    showCheckoutPopup(
+      `Mindestbestellwert für diese Entfernung: ${delivery.minOrder} €`,
+      "error"
+    );
+    return;
+  }
+
   let checkoutBtn = document.getElementById("cartCheckoutBtn");
   if (checkoutBtn) {
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = "Wird bearbeitet...";
 
-    showCheckoutPopup("Bestellung wurde aufgegeben!", "success");
+    let deliveryText = delivery
+      ? `<br>Lieferkosten: <b>${
+          delivery.deliveryCost === 0
+            ? "kostenlos"
+            : delivery.deliveryCost !== null
+            ? delivery.deliveryCost.toFixed(2) + " €"
+            : "nach Absprache"
+        }</b>`
+      : "";
+    showCheckoutPopup(`Bestellung wurde aufgegeben!${deliveryText}`, "success");
     scheduleThankYouMessage(checkoutBtn);
   }
 };

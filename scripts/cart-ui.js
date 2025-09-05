@@ -99,10 +99,37 @@ let renderCartItems = () => {
 
   let cart = window.cartCore ? window.cartCore.getCart() : [];
 
+  let deliveryInfo = document.getElementById("cartDeliveryInfo");
+  if (!deliveryInfo) {
+    deliveryInfo = document.createElement("div");
+    deliveryInfo.id = "cartDeliveryInfo";
+    deliveryInfo.style.marginTop = "1em";
+    cartFooter.appendChild(deliveryInfo);
+  }
+  // Beispiel: Entfernung aus localStorage oder Default
+  let distanceKm = parseFloat(localStorage.getItem("deliveryDistance")) || 2;
+  let orderValue = window.cartCore.getCartTotal();
+  let delivery = window.delivery
+    ? window.delivery.calculateDelivery(distanceKm, orderValue)
+    : null;
+  if (delivery) {
+    deliveryInfo.innerHTML =
+      `<strong>Lieferung:</strong> ${delivery.info}<br>` +
+      (delivery.deliveryCost !== null
+        ? `Lieferkosten: <b>${
+            delivery.deliveryCost === 0
+              ? "kostenlos"
+              : delivery.deliveryCost.toFixed(2) + " €"
+          }</b><br>`
+        : "Lieferkosten nach Absprache<br>") +
+      `Mindestbestellwert: <b>${delivery.minOrder} €</b><br>` +
+      `<span style='font-size:0.9em;color:#666;'>${delivery.freePickup}</span>`;
+  }
+
   if (cart.length === 0) {
     cartEmpty.style.display = "block";
     cartItems.innerHTML = "";
-    cartFooter.style.display = "none";
+    cartFooter.style.display = "block";
   } else {
     cartEmpty.style.display = "none";
     cartFooter.style.display = "block";
