@@ -58,16 +58,60 @@ let validateContactForm = (contactForm) => {
  * @param {HTMLButtonElement} formBtn - The submit button
  * @param {HTMLFormElement} contactForm - The contact form
  */
-let processContactFormSubmission = (formBtn, contactForm) => {
+let processContactFormSubmission = async (formBtn, contactForm) => {
   formBtn.textContent = "Wird gesendet...";
   formBtn.disabled = true;
 
-  setTimeout(() => {
-    showSuccessPopup();
-    contactForm.reset();
+  try {
+    // Create FormData from the form
+    const formData = new FormData(contactForm);
+
+    // Send to Formspree
+    const response = await fetch(contactForm.action, {
+      method: contactForm.method,
+      body: formData,
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (response.ok) {
+      showSuccessPopup();
+      contactForm.reset();
+      // showFormStatus("✅ Nachricht erfolgreich gesendet!", "success");
+    } else {
+      const data = await response.json();
+      throw new Error(data.error || "Server error");
+    }
+  } catch (error) {
+    console.error("Form submission error:", error);
+    showErrorPopup("Fehler beim Senden. Bitte erneut versuchen.");
+    // showFormStatus("❌ Fehler beim Senden. Bitte erneut versuchen.", "error");
+  } finally {
     formBtn.textContent = "Senden";
     formBtn.disabled = false;
-  }, 1000);
+  }
+};
+
+/**
+ * Shows form status message
+ * @param {string} message - The status message
+ * @param {string} type - The type of message ('success' or 'error')
+ */
+let showFormStatus = (message, type) => {
+  let statusElement = document.getElementById("form-status");
+  if (statusElement) {
+    statusElement.textContent = message;
+    statusElement.className = `form_status form_status--${type}`;
+    statusElement.style.display = "block";
+
+    // Hide status after 5 seconds
+    setTimeout(() => {
+      statusElement.style.display = "none";
+      statusElement.textContent = "";
+      statusElement.className = "form_status";
+    }, 5000);
+  }
 };
 
 /**
@@ -252,6 +296,7 @@ if (!window.navigationForms) {
     initHeroButton,
     showSuccessPopup,
     showErrorPopup,
+    showFormStatus,
   };
 }
 
@@ -263,5 +308,6 @@ if (typeof module !== "undefined" && module.exports) {
     initHeroButton,
     showSuccessPopup,
     showErrorPopup,
+    showFormStatus,
   };
 }
