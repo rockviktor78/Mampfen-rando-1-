@@ -182,15 +182,13 @@ let showCheckoutPopup = (message, type = "success") => {
 let createCheckoutPopup = (message, type) => {
   let popup = document.createElement("div");
   popup.className = "checkout-popup";
-  popup.innerHTML = `
-    <div class="checkout-popup_content checkout-popup_content--${type}">
-      <span class="checkout-popup_icon">${
-        type === "success" ? "✅" : "❌"
-      }</span>
-      <p class="checkout-popup_text">${message}</p>
-    </div>
-  `;
-
+  if (window.templateHTML && window.templateHTML.getCheckoutPopupHTML) {
+    popup.innerHTML = window.templateHTML.getCheckoutPopupHTML(message, type);
+  } else {
+    popup.innerHTML = `<div class="checkout-popup_content checkout-popup_content--${type}"><span class="checkout-popup_icon">${
+      type === "success" ? "✅" : "❌"
+    }</span><p class="checkout-popup_text">${message}</p></div>`;
+  }
   popup.style.position = "fixed";
   popup.style.top = "50%";
   popup.style.left = "50%";
@@ -198,7 +196,6 @@ let createCheckoutPopup = (message, type) => {
   popup.style.zIndex = "10001";
   popup.style.opacity = "0";
   popup.style.transition = "opacity 0.3s ease";
-
   return popup;
 };
 

@@ -38,7 +38,6 @@ let createFABElement = () => {
  * @param {HTMLElement} fab - FAB element
  */
 let setFABContent = (fab) => {
-  // HTML auslagern
   if (window.templateHTML && window.templateHTML.getFABContent) {
     fab.innerHTML = window.templateHTML.getFABContent();
   } else {
@@ -146,7 +145,6 @@ let renderCartItems = () => {
 let generateCartItemsHTML = () => {
   let cart = window.cartCore ? window.cartCore.getCart() : [];
 
-  // HTML auslagern
   if (window.templateHTML && window.templateHTML.getCartItemHTML) {
     return cart
       .map((item) => window.templateHTML.getCartItemHTML(item))
@@ -154,33 +152,24 @@ let generateCartItemsHTML = () => {
   } else {
     return cart
       .map(
-        (item) => `
-        <div class="cart-item">
-          <div class="cart-item_info">
-            <div class="cart-item_name">${item.name}</div>
-            <div class="cart-item_price-info">
-              <div class="cart-item_single-price">${item.price.toFixed(
-                2
-              )} € × ${item.quantity}</div>
-              <div class="cart-item_total-price">${(
-                item.price * item.quantity
-              ).toFixed(2)} €</div>
-            </div>
-          </div>
-          <div class="cart-item_controls">
-            <button class="cart-item_btn cart-item_btn--decrease" data-item="${
-              item.name
-            }" data-action="decrease">−</button>
-            <span class="cart-item_quantity">${item.quantity}</span>
-            <button class="cart-item_btn cart-item_btn--increase" data-item="${
-              item.name
-            }" data-action="increase">+</button>
-            <button class="cart-item_btn cart-item_btn--delete" data-item="${
-              item.name
-            }" data-action="delete" title="Gericht entfernen">×</button>
-          </div>
-        </div>
-      `
+        (item) =>
+          `<div class="cart-item"><div class="cart-item_info"><div class="cart-item_name">${
+            item.name
+          }</div><div class="cart-item_price-info"><div class="cart-item_single-price">${item.price.toFixed(
+            2
+          )} € × ${item.quantity}</div><div class="cart-item_total-price">${(
+            item.price * item.quantity
+          ).toFixed(
+            2
+          )} €</div></div></div><div class="cart-item_controls"><button class="cart-item_btn cart-item_btn--decrease" data-item="${
+            item.name
+          }" data-action="decrease">−</button><span class="cart-item_quantity">${
+            item.quantity
+          }</span><button class="cart-item_btn cart-item_btn--increase" data-item="${
+            item.name
+          }" data-action="increase">+</button><button class="cart-item_btn cart-item_btn--delete" data-item="${
+            item.name
+          }" data-action="delete" title="Gericht entfernen">×</button></div></div>`
       )
       .join("");
   }
