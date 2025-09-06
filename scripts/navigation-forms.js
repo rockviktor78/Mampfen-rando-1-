@@ -199,7 +199,6 @@ let initFeatureCards = () => {
   initPastaFeatureCard();
   initSaladFeatureCard();
   initDessertFeatureCard();
-  initDeliveryFeatureCard();
 };
 
 /**
@@ -259,21 +258,6 @@ let initDessertFeatureCard = () => {
 };
 
 /**
- * Initializes delivery feature card
- */
-let initDeliveryFeatureCard = () => {
-  let deliveryCard = document.getElementById("deliveryFeatureCard");
-  if (deliveryCard) {
-    deliveryCard.addEventListener("click", () => {
-      if (window.navigationCore) {
-        window.navigationCore.navigateToMenu();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    });
-  }
-};
-
-/**
  * Initializes the hero button event listener
  */
 let initHeroButton = () => {
@@ -299,6 +283,19 @@ if (!window.navigationForms) {
     showFormStatus,
   };
 }
+
+// Export for modules
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    initContactForm,
+    initFeatureCards,
+    initHeroButton,
+    showSuccessPopup,
+    showErrorPopup,
+    showFormStatus,
+  };
+}
+
 
 // Export for modules
 if (typeof module !== "undefined" && module.exports) {

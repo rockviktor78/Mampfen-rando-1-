@@ -284,3 +284,13 @@ if (typeof module !== "undefined" && module.exports) {
     handleCartItemClick,
   };
 }
+
+// Initialisierung für mobilen Warenkorb-FAB
+document.addEventListener("DOMContentLoaded", () => {
+  window.cartUI.createMobileCartFAB();
+  window.cartUI.showMobileCartFAB();
+});
+
+window.addEventListener("resize", () => {
+  window.cartUI.showMobileCartFAB();
+});
