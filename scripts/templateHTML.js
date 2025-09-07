@@ -18,12 +18,12 @@ export function getErrorPopupHTML(message) {
 	`;
 }
 
-export function getFABContent() {
-  return `
-		🛒
-		<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>
-	`;
-}
+// export function getFABContent() {
+//   return `
+// 		🛒
+// 		<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>
+// 	`;
+// }
 
 export function getCartItemHTML(item) {
   return `
@@ -87,13 +87,6 @@ export function getErrorPopupHTML(message) {
 			<span class="success-popup_icon">❌</span>
 			<p class="success-popup_text">${message}</p>
 		</div>
-	`;
-}
-
-export function getFABContent() {
-  return `
-		🛒
-		<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>
 	`;
 }
 
