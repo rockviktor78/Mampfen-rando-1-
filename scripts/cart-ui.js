@@ -286,11 +286,11 @@ if (typeof module !== "undefined" && module.exports) {
 }
 
 // Initialisierung für mobilen Warenkorb-FAB
-document.addEventListener("DOMContentLoaded", () => {
-  window.cartUI.createMobileCartFAB();
-  window.cartUI.showMobileCartFAB();
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//   window.cartUI.createMobileCartFAB();
+//   window.cartUI.showMobileCartFAB();
+// });
 
-window.addEventListener("resize", () => {
-  window.cartUI.showMobileCartFAB();
-});
+// window.addEventListener("resize", () => {
+//   window.cartUI.showMobileCartFAB();
+// });
