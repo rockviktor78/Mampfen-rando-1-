@@ -98,6 +98,9 @@ let renderCartItems = () => {
 
   let cart = window.cartCore ? window.cartCore.getCart() : [];
 
+  // --- Feste Lieferkosten: bis 25 € = 5 €, ab 25 € = kostenlos ---
+  let orderValue = window.cartCore ? window.cartCore.getCartTotal() : 0;
+  let deliveryCost = orderValue < 25 ? 5 : 0;
   let deliveryInfo = document.getElementById("cartDeliveryInfo");
   if (!deliveryInfo) {
     deliveryInfo = document.createElement("div");
@@ -105,25 +108,12 @@ let renderCartItems = () => {
     deliveryInfo.style.marginTop = "1em";
     cartFooter.appendChild(deliveryInfo);
   }
-  // Beispiel: Entfernung aus localStorage oder Default
-  let distanceKm = parseFloat(localStorage.getItem("deliveryDistance")) || 2;
-  let orderValue = window.cartCore.getCartTotal();
-  let delivery = window.delivery
-    ? window.delivery.calculateDelivery(distanceKm, orderValue)
-    : null;
-  if (delivery) {
-    deliveryInfo.innerHTML =
-      `<strong>Lieferung:</strong> ${delivery.info}<br>` +
-      (delivery.deliveryCost !== null
-        ? `Lieferkosten: <b>${
-            delivery.deliveryCost === 0
-              ? "kostenlos"
-              : delivery.deliveryCost.toFixed(2) + " €"
-          }</b><br>`
-        : "Lieferkosten nach Absprache<br>") +
-      `Mindestbestellwert: <b>${delivery.minOrder} €</b><br>` +
-      `<span style='font-size:0.9em;color:#666;'>${delivery.freePickup}</span>`;
-  }
+  deliveryInfo.innerHTML =
+    `<span>Lieferkosten:</span> ${
+      deliveryCost === 0 ? "kostenlos" : deliveryCost.toFixed(2) + " €"
+    }</b><br>` +
+    `<span>Mindestbestellwert:</span> 10 €<br>` +
+    `<strong>Ab 25 € liefern wir kostenlos.</strong>`;
 
   if (cart.length === 0) {
     cartEmpty.style.display = "block";
