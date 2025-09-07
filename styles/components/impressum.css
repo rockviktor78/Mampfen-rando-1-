@@ -78,26 +78,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .impressum {
-    padding: 3rem 1rem;
-  }
-
-  .impressum_title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .impressum_content {
-    font-size: 0.95rem;
-  }
-
-  .impressum_content h3 {
-    font-size: 1.35rem;
-    margin: 2rem 0 1.25rem 0;
-  }
-}
-
 @media (max-width: 480px) {
   .impressum {
     padding: 2rem 0.75rem;
@@ -119,3 +99,25 @@
     padding: 1rem;
   }
 }
+
+@media (max-width: 768px) {
+  .impressum {
+    padding: 3rem 1rem;
+  }
+
+  .impressum_title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .impressum_content {
+    font-size: 0.95rem;
+  }
+
+  .impressum_content h3 {
+    font-size: 1.35rem;
+    margin: 2rem 0 1.25rem 0;
+  }
+}
+
+

@@ -149,28 +149,6 @@
   color: #eca660;
 }
 
-/* Tablet */
-@media (max-width: 768px) {
-  .footer {
-    padding: 2rem 1rem 1rem;
-  }
-
-  .footer_content {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .footer_legal {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
-
-  .legal_links {
-    justify-content: center;
-  }
-}
-
 /* Mobile */
 @media (max-width: 480px) {
   .footer {
@@ -199,3 +177,26 @@
     gap: 0.75rem;
   }
 }
+
+/* Tablet */
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 1rem 1rem;
+  }
+
+  .footer_content {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .footer_legal {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .legal_links {
+    justify-content: center;
+  }
+}
+

@@ -79,27 +79,7 @@
   font-weight: 500;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .agb {
-    padding: 3rem 1rem;
-  }
-
-  .agb_title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .agb_content {
-    font-size: 0.95rem;
-  }
-
-  .agb_content h3 {
-    font-size: 1.3rem;
-    margin: 2rem 0 1.25rem 0;
-  }
-}
-
+/* Optimierung für mobile Geräte bis 480px */
 @media (max-width: 480px) {
   .agb {
     padding: 2rem 0.75rem;
@@ -121,3 +101,20 @@
     padding: 1rem;
   }
 }
+
+/* Optimierung für Tablets und kleinere Desktops bis 768px */
+@media (max-width: 768px) {
+  .agb {
+    padding: 3rem 1rem;
+  }
+
+  .agb_title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .agb_content {
+    font-size: 0.95rem;
+  }
+}
+

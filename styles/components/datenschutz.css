@@ -133,7 +133,30 @@
   font-size: 0.85rem;
 }
 
-/* Responsive Design */
+/* ----------- Responsive Design für mobile Geräte bis 480px ----------- */
+@media (max-width: 480px) {
+  .datenschutz {
+    padding: 2rem 0.75rem;
+  }
+
+  .datenschutz_title {
+    font-size: 1.75rem;
+  }
+
+  .datenschutz_content {
+    font-size: 0.9rem;
+  }
+
+  .datenschutz_content h3 {
+    font-size: 1.25rem;
+  }
+
+  .datenschutz_content h4 {
+    font-size: 1.15rem;
+  }
+}
+
+/* ----------- Responsive Design für Tablets und kleinere Desktops bis 768px ----------- */
 @media (max-width: 768px) {
   .datenschutz {
     padding: 3rem 1rem;
@@ -158,29 +181,7 @@
   }
 }
 
-@media (max-width: 480px) {
-  .datenschutz {
-    padding: 2rem 0.75rem;
-  }
-
-  .datenschutz_title {
-    font-size: 1.75rem;
-  }
-
-  .datenschutz_content {
-    font-size: 0.9rem;
-  }
-
-  .datenschutz_content h3 {
-    font-size: 1.25rem;
-  }
-
-  .datenschutz_content h4 {
-    font-size: 1.15rem;
-  }
-}
-
-/* Print Styles */
+/* ----------- Druck-Optimierung für Datenschutzhinweise ----------- */
 @media print {
   .datenschutz {
     padding: 0;
