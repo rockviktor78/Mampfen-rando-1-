@@ -78,7 +78,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 480px) {
+@media (min-width: 300px) and (max-width: 480px) {
   .impressum {
     padding: 2rem 0.75rem;
   }
@@ -100,7 +100,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 481px) and (max-width: 768px) {
   .impressum {
     padding: 3rem 1rem;
   }

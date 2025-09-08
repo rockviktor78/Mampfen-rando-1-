@@ -4,12 +4,13 @@
 
 - **Pseudo-MPA mit includeHTML.js**: Eine zentrale index.html mit dynamischem Content-Loading über Templates
 - Navigation über Hash-URLs (#home, #menu, #basket, #order)
-- Für DOM-Zugriffe in allen JavaScript-Dateien immer `getElementById` verwenden. Kein `querySelector` oder `getElementsByClassName`.
+- Für DOM-Zugriffe in allen JavaScript-Dateien immer `getElementById` verwenden. Kein `getElementsByClassName`.
 - Für Styling in CSS immer Klassen (`.css`) mit Bindestrich verwenden (z.B. `.menu-item`).
 - Für JavaScript-Selektoren immer IDs (`id="..."`) im HTML verwenden, im Kamelcase-Stil (z.B. `menuContainer`).
 - IDs sind ausschließlich für JavaScript-Zugriffe reserviert.
 - Klassen sind ausschließlich für CSS-Styles reserviert.
 - Immer `let` oder `const` verwenden, niemals `var`.
+- HTML-Tag Elemente immer zum stylen mit class="" versehen, niemals ohne.
 
 ## JavaScript-Datei-Beschränkungen
 
@@ -90,6 +91,7 @@ window.templates = templates;
 - **Warenkorb**: Hinzufügen, Entfernen, Menge ändern
 - **Bestellprozess**: Bestellbestätigung
 - **Persistierung**: LocalStorage für Warenkorb zwischen Seitenaufrufen
+- **Lieferkosten**: Feste Lieferkosten (z.B. 5.00€) für Bestellungen unter 25.00€ mit Angabe im Warenkorb und mit Berechnung im Gesamtpreis
 
 ## JavaScript-Funktionsrichtlinien
 
@@ -167,7 +169,7 @@ Diese Regel gilt projektweit und betrifft alle JavaScript-Dateien.
 - Keine Magic Numbers oder Strings – stattdessen Konstanten verwenden.
 - **ECMAScript Modules**: Ausschließlich moderne ES6+ Module verwenden (`import`/`export`). Keine CommonJS (`require`/`module.exports`). Target: `module: "es2020"`.
 - **CSS Custom Properties (Variablen)**: Alle Farben über CSS-Variablen im :root definieren. Keine Hex-Codes direkt im CSS verwenden.
-- **Relative Einheiten**: Immer `rem` für Größen, Abstände und Schriftgrößen verwenden. Keine `px` außer bei Borders (1px), box-shadow und @media. Auf zwei Dezimalstellen runden.
+- **Relative Einheiten**: Immer `rem` für Größen, Abstände und Schriftgrößen verwenden. Keine `px` außer bei Borders (1px), box-shadow und @media. Auf zwei     Dezimalstellen runden.
 - Konsistente Farbpalette: Haupt-, Sekundär-, Akzent- und Neutralfarben definieren.
 - Komponenten und Funktionen klar benennen.
 - Keine doppelten IDs oder Klassennamen.
