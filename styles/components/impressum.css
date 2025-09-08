@@ -23,7 +23,7 @@
   color: #462521;
 }
 
-.impressum_content h3 {
+.impressum_subtitle {
   font-size: 1.5rem;
   font-weight: 600;
   color: #ab4c2f;
@@ -91,7 +91,7 @@
     font-size: 0.9rem;
   }
 
-  .impressum_content h3 {
+  .impressum_subtitle {
     font-size: 1.25rem;
   }
 
@@ -114,10 +114,8 @@
     font-size: 0.95rem;
   }
 
-  .impressum_content h3 {
+  .impressum_subtitle {
     font-size: 1.35rem;
     margin: 2rem 0 1.25rem 0;
   }
 }
-
-

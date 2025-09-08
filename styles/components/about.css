@@ -29,11 +29,11 @@
   color: #462521;
 }
 
-.about_text p {
+.about_text-p1 {
   margin-bottom: 1.5rem;
 }
 
-.about_text p:last-child {
+.about_text-p1  {
   margin-bottom: 0;
 }
 
