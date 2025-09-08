@@ -134,7 +134,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 999;
-  display: none; /* Standardmäßig versteckt */
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
@@ -188,34 +187,33 @@
     gap: 1.5rem;
   }
 
-/* ----------- Desktop ab 1024px ----------- */
-@media (min-width: 1024px) {
-  .menu {
-    padding: 4rem 2rem;
-  }
-
-  .menu_title {
-    font-size: 3rem;
-    margin-bottom: 4rem;
-  }
-
-  .category_title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .menu_item {
-    padding: 2rem;
-  }
-
-  .item_image {
-    width: 120px;
-    height: 120px;
-  }
-}
-
-/* Verstecke mobile FAB auf größeren Bildschirmen */
   .mobile-cart-fab {
-    display: none !important;
+    display: none !important; /* Verstecke mobile FAB auf größeren Bildschirmen */
+  }
+
+  /* ----------- Desktop ab 1024px ----------- */
+  @media (min-width: 1024px) {
+    .menu {
+      padding: 4rem 2rem;
+    }
+
+    .menu_title {
+      font-size: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    .category_title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .menu_item {
+      padding: 2rem;
+    }
+
+    .item_image {
+      width: 120px;
+      height: 120px;
+    }
   }
 }
