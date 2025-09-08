@@ -13,13 +13,13 @@ let loadCartModal = async () => {
   }
 };
 
-/**
- * Checks if mobile FAB already exists
- * @returns {boolean} True if FAB exists
- */
-let fabExists = () => {
-  return !!document.getElementById("mobileCartFAB");
-};
+// /**
+//  * Checks if mobile FAB already exists
+//  * @returns {boolean} True if FAB exists
+//  */
+// let fabExists = () => {
+//   return !!document.getElementById("mobileCartFAB");
+// };
 
 /**
  * Creates FAB button element
@@ -38,11 +38,11 @@ let createFABElement = () => {
  * @param {HTMLElement} fab - FAB element
  */
 let setFABContent = (fab) => {
-  if (window.templateHTML && window.templateHTML.getFABContent) {
-    fab.innerHTML = window.templateHTML.getFABContent();
-  } else {
-    fab.innerHTML = `🛒<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>`;
-  }
+  // if (window.templateHTML && window.templateHTML.getFABContent) {
+  //   fab.innerHTML = window.templateHTML.getFABContent();
+  // } else {
+  // }
+  fab.innerHTML = `🛒<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>`;
 };
 
 /**
@@ -58,12 +58,12 @@ let addFABEventListener = (fab) => {
  * @returns {HTMLElement} The created FAB element
  */
 let createMobileCartFAB = () => {
-  if (fabExists()) return;
+  // if (fabExists()) return;
 
   let fab = createFABElement();
   setFABContent(fab);
   addFABEventListener(fab);
-  document.body.appendChild(fab);
+  // document.body.appendChild(fab);
   return fab;
 };
 
@@ -286,7 +286,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 // Initialisierung für mobilen Warenkorb-FAB
 document.addEventListener("DOMContentLoaded", () => {
-  window.cartUI.createMobileCartFAB();
+  // window.cartUI.createMobileCartFAB();
   window.cartUI.showMobileCartFAB();
 });
 
