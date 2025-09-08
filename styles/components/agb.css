@@ -86,7 +86,7 @@
   }
 
   .agb_title {
-    font-size: 1.75rem;
+    font-size: 1.75rem !important;
   }
 
   .agb_content {
