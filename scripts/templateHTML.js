@@ -71,6 +71,12 @@ export function getCheckoutPopupHTML(message, type) {
 	`;
 }
 
-
-
-
+// Window-Export für Kompatibilität mit bestehenden Modulen
+window.templateHTML = {
+  getSuccessPopupHTML,
+  getErrorPopupHTML,
+  getFABContent,
+  getCartItemHTML,
+  getAddToCartMessageHTML,
+  getCheckoutPopupHTML,
+};

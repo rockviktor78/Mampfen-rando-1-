@@ -100,7 +100,7 @@ let renderCartItems = () => {
 
   // --- Feste Lieferkosten: bis 25 € = 5 €, ab 25 € = kostenlos ---
   let orderValue = window.cartCore ? window.cartCore.getCartTotal() : 0;
-  let deliveryCost = orderValue < 25 ? 5 : 0;
+  let deliveryCost = orderValue < 25 && orderValue > 0 ? 5 : 0;
   let deliveryInfo = document.getElementById("cartDeliveryInfo");
   if (!deliveryInfo) {
     deliveryInfo = document.createElement("div");
@@ -111,14 +111,16 @@ let renderCartItems = () => {
   deliveryInfo.innerHTML =
     `<span>Lieferkosten:</span> ${
       deliveryCost === 0 ? "kostenlos" : deliveryCost.toFixed(2) + " €"
-    }</b><br>` +
+    }<br>` +
     `<span>Mindestbestellwert:</span> 10 €<br>` +
-    `<strong>Ab 25 € liefern wir kostenlos.</strong>`;
+    `<strong>Ab 25 € liefern wir kostenlos.</strong><br>` +
+    `<em>Abholung ist immer kostenfrei.</em>`;
 
   if (cart.length === 0) {
     cartEmpty.style.display = "block";
     cartItems.innerHTML = "";
     cartFooter.style.display = "block";
+    updateCartTotal(); // Preis auf 0,00 € setzen wenn leer
   } else {
     cartEmpty.style.display = "none";
     cartFooter.style.display = "block";
@@ -217,7 +219,14 @@ let handleCartItemClick = (e) => {
 let updateCartTotal = () => {
   let totalElement = document.getElementById("cartTotalAmount");
   if (totalElement && window.cartCore) {
-    totalElement.textContent = `${window.cartCore.getCartTotal().toFixed(2)} €`;
+    let orderValue = window.cartCore.getCartTotal();
+    let deliveryCost = orderValue < 25 && orderValue > 0 ? 5 : 0;
+    let totalWithDelivery = orderValue + deliveryCost;
+
+    totalElement.textContent = `${totalWithDelivery.toFixed(2)} €`;
+  } else if (totalElement) {
+    // Fallback für leeren Warenkorb
+    totalElement.textContent = "0,00 €";
   }
 };
 
@@ -276,11 +285,11 @@ if (typeof module !== "undefined" && module.exports) {
 }
 
 // Initialisierung für mobilen Warenkorb-FAB
-// document.addEventListener("DOMContentLoaded", () => {
-//   window.cartUI.createMobileCartFAB();
-//   window.cartUI.showMobileCartFAB();
-// });
+document.addEventListener("DOMContentLoaded", () => {
+  window.cartUI.createMobileCartFAB();
+  window.cartUI.showMobileCartFAB();
+});
 
-// window.addEventListener("resize", () => {
-//   window.cartUI.showMobileCartFAB();
-// });
+window.addEventListener("resize", () => {
+  window.cartUI.showMobileCartFAB();
+});

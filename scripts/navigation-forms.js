@@ -295,16 +295,3 @@ if (typeof module !== "undefined" && module.exports) {
     showFormStatus,
   };
 }
-
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    initContactForm,
-    initFeatureCards,
-    initHeroButton,
-    showSuccessPopup,
-    showErrorPopup,
-    showFormStatus,
-  };
-}
