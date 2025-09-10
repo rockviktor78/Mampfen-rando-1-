@@ -30,7 +30,9 @@ let createFABElement = () => {
  * @param {HTMLElement} fab - FAB element
  */
 let setFABContent = (fab) => {
-   fab.innerHTML = `🛒<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>`;
+  if (window.templateHTML && window.templateHTML.getFABContent) {
+    fab.innerHTML = window.templateHTML.getFABContent();
+  }
 };
 
 /**
@@ -79,42 +81,126 @@ let closeCartModal = () => {
  * Renders all items in the cart modal
  */
 let renderCartItems = () => {
-  let cartEmpty = document.getElementById("cartEmpty");
-  let cartItems = document.getElementById("cartItems");
-  let cartFooter = document.getElementById("cartModalFooter");
+  let cart = getCartData();
+  updateDeliveryInfo(cart);
 
-  let cart = window.cartCore ? window.cartCore.getCart() : [];
+  if (cart.length === 0) {
+    showEmptyCartView();
+  } else {
+    showCartWithItems();
+  }
+};
 
-  // --- Feste Lieferkosten: bis 25 € = 5 €, ab 25 € = kostenlos ---
-  let orderValue = window.cartCore ? window.cartCore.getCartTotal() : 0;
-  let deliveryCost = orderValue < 25 && orderValue > 0 ? 5 : 0;
+/**
+ * Gets cart data from cart core
+ * @returns {Array} Cart items array
+ */
+let getCartData = () => {
+  return window.cartCore ? window.cartCore.getCart() : [];
+};
+
+/**
+ * Updates delivery information display
+ * @param {Array} cart - Cart items array
+ */
+let updateDeliveryInfo = (cart) => {
+  let deliveryInfo = getOrCreateDeliveryInfo();
+  let deliveryContent = generateDeliveryContent(cart);
+  setDeliveryInfoContent(deliveryInfo, deliveryContent);
+};
+
+/**
+ * Gets or creates delivery info element
+ * @returns {HTMLElement} Delivery info element
+ */
+let getOrCreateDeliveryInfo = () => {
   let deliveryInfo = document.getElementById("cartDeliveryInfo");
   if (!deliveryInfo) {
-    deliveryInfo = document.createElement("div");
-    deliveryInfo.id = "cartDeliveryInfo";
-    deliveryInfo.style.marginTop = "1em";
-    cartFooter.appendChild(deliveryInfo);
+    deliveryInfo = createDeliveryInfoElement();
   }
-  deliveryInfo.innerHTML =
+  return deliveryInfo;
+};
+
+/**
+ * Creates delivery info element
+ * @returns {HTMLElement} New delivery info element
+ */
+let createDeliveryInfoElement = () => {
+  let cartFooter = document.getElementById("cartModalFooter");
+  let deliveryInfo = document.createElement("div");
+  deliveryInfo.id = "cartDeliveryInfo";
+  deliveryInfo.style.marginTop = "1em";
+  cartFooter.appendChild(deliveryInfo);
+  return deliveryInfo;
+};
+
+/**
+ * Generates delivery content based on cart
+ * @param {Array} cart - Cart items array
+ * @returns {string} HTML content for delivery info
+ */
+let generateDeliveryContent = (cart) => {
+  if (window.templateHTML && window.templateHTML.getDeliveryInfoHTML) {
+    return window.templateHTML.getDeliveryInfoHTML(cart);
+  }
+  return getFallbackDeliveryHTML(cart);
+};
+
+/**
+ * Gets fallback delivery HTML
+ * @param {Array} cart - Cart items array
+ * @returns {string} Fallback HTML content
+ */
+let getFallbackDeliveryHTML = (cart) => {
+  let orderValue = window.cartCore ? window.cartCore.getCartTotal() : 0;
+  let deliveryCost = orderValue < 25 && orderValue > 0 ? 5 : 0;
+
+  return (
     `<span>Lieferkosten:</span> ${
       deliveryCost === 0 ? "kostenlos" : deliveryCost.toFixed(2) + " €"
     }<br>` +
     `<span>Mindestbestellwert:</span> 10 €<br>` +
     `<strong>Ab 25 € liefern wir kostenlos.</strong><br>` +
-    `<em>Abholung ist immer kostenfrei.</em>`;
+    `<em>Abholung ist immer kostenfrei.</em>`
+  );
+};
 
-  if (cart.length === 0) {
-    cartEmpty.style.display = "block";
-    cartItems.innerHTML = "";
-    cartFooter.style.display = "block";
-    updateCartTotal(); // Preis auf 0,00 € setzen wenn leer
-  } else {
-    cartEmpty.style.display = "none";
-    cartFooter.style.display = "block";
-    cartItems.innerHTML = generateCartItemsHTML();
-    updateCartTotal();
-    initCartItemEventListeners();
-  }
+/**
+ * Sets content for delivery info element
+ * @param {HTMLElement} deliveryInfo - Delivery info element
+ * @param {string} content - HTML content to set
+ */
+let setDeliveryInfoContent = (deliveryInfo, content) => {
+  deliveryInfo.innerHTML = content;
+};
+
+/**
+ * Shows empty cart view
+ */
+let showEmptyCartView = () => {
+  let cartEmpty = document.getElementById("cartEmpty");
+  let cartItems = document.getElementById("cartItems");
+  let cartFooter = document.getElementById("cartModalFooter");
+
+  cartEmpty.style.display = "block";
+  cartItems.innerHTML = "";
+  cartFooter.style.display = "block";
+  updateCartTotal();
+};
+
+/**
+ * Shows cart view with items
+ */
+let showCartWithItems = () => {
+  let cartEmpty = document.getElementById("cartEmpty");
+  let cartItems = document.getElementById("cartItems");
+  let cartFooter = document.getElementById("cartModalFooter");
+
+  cartEmpty.style.display = "none";
+  cartFooter.style.display = "block";
+  cartItems.innerHTML = generateCartItemsHTML();
+  updateCartTotal();
+  initCartItemEventListeners();
 };
 
 /**
@@ -123,35 +209,30 @@ let renderCartItems = () => {
  */
 let generateCartItemsHTML = () => {
   let cart = window.cartCore ? window.cartCore.getCart() : [];
+  return generateItemsHTML(cart);
+};
 
+/**
+ * Generates HTML for cart items using templates
+ * @param {Array} cart - Cart items array
+ * @returns {string} HTML string for all cart items
+ */
+let generateItemsHTML = (cart) => {
   if (window.templateHTML && window.templateHTML.getCartItemHTML) {
-    return cart
-      .map((item) => window.templateHTML.getCartItemHTML(item))
-      .join("");
+    return mapItemsToHTML(cart);
   } else {
-    return cart
-      .map(
-        (item) =>
-          `<div class="cart-item"><div class="cart-item_info"><div class="cart-item_name">${
-            item.name
-          }</div><div class="cart-item_price-info"><div class="cart-item_single-price">${item.price.toFixed(
-            2
-          )} € × ${item.quantity}</div><div class="cart-item_total-price">${(
-            item.price * item.quantity
-          ).toFixed(
-            2
-          )} €</div></div></div><div class="cart-item_controls"><button class="cart-item_btn cart-item_btn--decrease" data-item="${
-            item.name
-          }" data-action="decrease">−</button><span class="cart-item_quantity">${
-            item.quantity
-          }</span><button class="cart-item_btn cart-item_btn--increase" data-item="${
-            item.name
-          }" data-action="increase">+</button><button class="cart-item_btn cart-item_btn--delete" data-item="${
-            item.name
-          }" data-action="delete" title="Gericht entfernen">×</button></div></div>`
-      )
-      .join("");
+    console.warn("templateHTML.getCartItemHTML not available!");
+    return "";
   }
+};
+
+/**
+ * Maps cart items to HTML using template
+ * @param {Array} cart - Cart items array
+ * @returns {string} Joined HTML string
+ */
+let mapItemsToHTML = (cart) => {
+  return cart.map((item) => window.templateHTML.getCartItemHTML(item)).join("");
 };
 
 /**
@@ -172,31 +253,85 @@ let initCartItemEventListeners = () => {
  * @param {Event} e - The click event
  */
 let handleCartItemClick = (e) => {
-  if (!e.target.classList.contains("cart-item_btn")) return;
+  if (!isCartItemButton(e.target)) return;
 
-  let itemName = e.target.getAttribute("data-item");
-  let action = e.target.getAttribute("data-action");
+  let actionData = getActionData(e.target);
+  if (!actionData.isValid) return;
 
-  if (!itemName || !action) return;
+  executeCartAction(actionData.action, actionData.itemName);
+};
 
-  console.log(`Cart action: ${action} for item: ${itemName}`);
+/**
+ * Checks if clicked element is a cart item button
+ * @param {HTMLElement} target - The clicked element
+ * @returns {boolean} True if it is a cart item button
+ */
+let isCartItemButton = (target) => {
+  return target.classList.contains("cart-item_btn");
+};
 
+/**
+ * Gets action data from button element
+ * @param {HTMLElement} button - The button element
+ * @returns {Object} Action data with isValid, action, and itemName
+ */
+let getActionData = (button) => {
+  let itemName = button.getAttribute("data-item");
+  let action = button.getAttribute("data-action");
+
+  return {
+    isValid: !!(itemName && action),
+    action: action,
+    itemName: itemName,
+  };
+};
+
+/**
+ * Executes cart action based on action type
+ * @param {string} action - The action to execute
+ * @param {string} itemName - The item name
+ */
+let executeCartAction = (action, itemName) => {
   switch (action) {
     case "increase":
-      if (window.cartHandler && window.cartHandler.increaseQuantity) {
-        window.cartHandler.increaseQuantity(itemName);
-      }
+      executeIncreaseAction(itemName);
       break;
     case "decrease":
-      if (window.cartHandler && window.cartHandler.decreaseQuantity) {
-        window.cartHandler.decreaseQuantity(itemName);
-      }
+      executeDecreaseAction(itemName);
       break;
     case "delete":
-      if (window.cartHandler && window.cartHandler.removeItemFromCart) {
-        window.cartHandler.removeItemFromCart(itemName);
-      }
+      executeDeleteAction(itemName);
       break;
+  }
+};
+
+/**
+ * Executes increase quantity action
+ * @param {string} itemName - The item name
+ */
+let executeIncreaseAction = (itemName) => {
+  if (window.cartCore && window.cartCore.increaseQuantity) {
+    window.cartCore.increaseQuantity(itemName);
+  }
+};
+
+/**
+ * Executes decrease quantity action
+ * @param {string} itemName - The item name
+ */
+let executeDecreaseAction = (itemName) => {
+  if (window.cartCore && window.cartCore.decreaseQuantity) {
+    window.cartCore.decreaseQuantity(itemName);
+  }
+};
+
+/**
+ * Executes delete item action
+ * @param {string} itemName - The item name
+ */
+let executeDeleteAction = (itemName) => {
+  if (window.cartCore && window.cartCore.removeItemFromCart) {
+    window.cartCore.removeItemFromCart(itemName);
   }
 };
 
@@ -242,40 +377,42 @@ let hideMobileCartFAB = () => {
 };
 
 // Make globally available
-if (!window.cartUI) {
-  window.cartUI = {
-    loadCartModal,
-    createMobileCartFAB,
-    openCartModal,
-    closeCartModal,
-    renderCartItems,
-    showMobileCartFAB,
-    hideMobileCartFAB,
-    initCartItemEventListeners,
-    handleCartItemClick,
-  };
-}
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    loadCartModal,
-    createMobileCartFAB,
-    openCartModal,
-    closeCartModal,
-    renderCartItems,
-    showMobileCartFAB,
-    hideMobileCartFAB,
-    initCartItemEventListeners,
-    handleCartItemClick,
-  };
-}
+window.cartUI = {
+  loadCartModal,
+  createMobileCartFAB,
+  openCartModal,
+  closeCartModal,
+  renderCartItems,
+  showMobileCartFAB,
+  hideMobileCartFAB,
+  initCartItemEventListeners,
+  handleCartItemClick,
+};
 
 // Initialisierung für mobilen Warenkorb-FAB
 document.addEventListener("DOMContentLoaded", () => {
-  cartUI.showMobileCartFAB();
+  initMobileCartOnLoad();
 });
 
 window.addEventListener("resize", () => {
-  cartUI.showMobileCartFAB();
+  handleWindowResize();
 });
+
+/**
+ * Initializes mobile cart on page load
+ */
+let initMobileCartOnLoad = () => {
+  if (window.cartUI) {
+    window.cartUI.createMobileCartFAB();
+    window.cartUI.showMobileCartFAB();
+  }
+};
+
+/**
+ * Handles window resize for mobile cart
+ */
+let handleWindowResize = () => {
+  if (window.cartUI) {
+    window.cartUI.showMobileCartFAB();
+  }
+};

@@ -97,42 +97,104 @@ let handleEmptyCartButtonClick = (e) => {
  * Processes the checkout with popup confirmations
  */
 let processCheckout = () => {
-  if (!window.cartCore) return;
+  if (!validateCheckoutRequirements()) return;
 
-  let cart = window.cartCore.getCart();
-  if (cart.length === 0) return;
-
-  // Lieferkosten prüfen
-  let distanceKm = parseFloat(localStorage.getItem("deliveryDistance")) || 2;
-  let orderValue = window.cartCore.getCartTotal();
-  let delivery = window.delivery
-    ? window.delivery.calculateDelivery(distanceKm, orderValue)
-    : null;
-  if (delivery && orderValue < delivery.minOrder) {
-    showCheckoutPopup(
-      `Mindestbestellwert für diese Entfernung: ${delivery.minOrder} €`,
-      "error"
-    );
+  let checkoutValidation = validateMinimumOrder();
+  if (!checkoutValidation.isValid) {
+    showCheckoutPopup(checkoutValidation.message, "error");
     return;
   }
 
+  executeCheckout();
+};
+
+/**
+ * Validates basic checkout requirements
+ * @returns {boolean} True if checkout can proceed
+ */
+let validateCheckoutRequirements = () => {
+  if (!window.cartCore) return false;
+  let cart = window.cartCore.getCart();
+  return cart.length > 0;
+};
+
+/**
+ * Validates minimum order requirements
+ * @returns {Object} Validation result with isValid and message
+ */
+let validateMinimumOrder = () => {
+  let delivery = calculateDeliveryInfo();
+  let orderValue = window.cartCore.getCartTotal();
+
+  if (delivery && orderValue < delivery.minOrder) {
+    return {
+      isValid: false,
+      message: `Mindestbestellwert für diese Entfernung: ${delivery.minOrder} €`,
+    };
+  }
+
+  return { isValid: true };
+};
+
+/**
+ * Calculates delivery information
+ * @returns {Object|null} Delivery info or null if not available
+ */
+let calculateDeliveryInfo = () => {
+  let distanceKm = parseFloat(localStorage.getItem("deliveryDistance")) || 2;
+  let orderValue = window.cartCore.getCartTotal();
+
+  return window.delivery
+    ? window.delivery.calculateDelivery(distanceKm, orderValue)
+    : null;
+};
+
+/**
+ * Executes the checkout process
+ */
+let executeCheckout = () => {
+  let checkoutBtn = prepareCheckoutButton();
+  if (!checkoutBtn) return;
+
+  let deliveryText = generateDeliveryText();
+  showCheckoutPopup(`Bestellung wurde aufgegeben!${deliveryText}`, "success");
+  scheduleThankYouMessage(checkoutBtn);
+};
+
+/**
+ * Prepares the checkout button for processing
+ * @returns {HTMLElement|null} The checkout button element
+ */
+let prepareCheckoutButton = () => {
   let checkoutBtn = document.getElementById("cartCheckoutBtn");
   if (checkoutBtn) {
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = "Wird bearbeitet...";
-
-    let deliveryText = delivery
-      ? `<br>Lieferkosten: <b>${
-          delivery.deliveryCost === 0
-            ? "kostenlos"
-            : delivery.deliveryCost !== null
-            ? delivery.deliveryCost.toFixed(2) + " €"
-            : "nach Absprache"
-        }</b>`
-      : "";
-    showCheckoutPopup(`Bestellung wurde aufgegeben!${deliveryText}`, "success");
-    scheduleThankYouMessage(checkoutBtn);
   }
+  return checkoutBtn;
+};
+
+/**
+ * Generates delivery text for checkout message
+ * @returns {string} Formatted delivery text
+ */
+let generateDeliveryText = () => {
+  let delivery = calculateDeliveryInfo();
+  if (!delivery) return "";
+
+  let costText = formatDeliveryCost(delivery.deliveryCost);
+  return `<br>Lieferkosten: <b>${costText}</b>`;
+};
+
+/**
+ * Formats delivery cost for display
+ * @param {number|null} deliveryCost - The delivery cost
+ * @returns {string} Formatted cost text
+ */
+let formatDeliveryCost = (deliveryCost) => {
+  if (deliveryCost === 0) return "kostenlos";
+  if (deliveryCost !== null) return `${deliveryCost.toFixed(2)} €`;
+  return "nach Absprache";
 };
 
 /**
@@ -158,9 +220,17 @@ let scheduleCartClear = (checkoutBtn) => {
     if (window.cartUI) {
       window.cartUI.closeCartModal();
     }
-    checkoutBtn.disabled = false;
-    checkoutBtn.textContent = "Zur Kasse";
+    resetCheckoutButton(checkoutBtn);
   }, 2000);
+};
+
+/**
+ * Resets the checkout button to initial state
+ * @param {HTMLButtonElement} checkoutBtn - The checkout button
+ */
+let resetCheckoutButton = (checkoutBtn) => {
+  checkoutBtn.disabled = false;
+  checkoutBtn.textContent = "Zur Kasse";
 };
 
 /**
@@ -180,15 +250,55 @@ let showCheckoutPopup = (message, type = "success") => {
  * @returns {HTMLElement} The popup element
  */
 let createCheckoutPopup = (message, type) => {
+  let popup = createPopupElement(message, type);
+  stylePopupElement(popup);
+  return popup;
+};
+
+/**
+ * Creates the basic popup DOM element
+ * @param {string} message - The message
+ * @param {string} type - The popup type
+ * @returns {HTMLElement} The popup element
+ */
+let createPopupElement = (message, type) => {
   let popup = document.createElement("div");
   popup.className = "checkout-popup";
+  setPopupContent(popup, message, type);
+  return popup;
+};
+
+/**
+ * Sets the popup content using template or fallback
+ * @param {HTMLElement} popup - The popup element
+ * @param {string} message - The message
+ * @param {string} type - The popup type
+ */
+let setPopupContent = (popup, message, type) => {
   if (window.templateHTML && window.templateHTML.getCheckoutPopupHTML) {
     popup.innerHTML = window.templateHTML.getCheckoutPopupHTML(message, type);
   } else {
-    popup.innerHTML = `<div class="checkout-popup_content checkout-popup_content--${type}"><span class="checkout-popup_icon">${
-      type === "success" ? "✅" : "❌"
-    }</span><p class="checkout-popup_text">${message}</p></div>`;
+    popup.innerHTML = getFallbackPopupHTML(message, type);
   }
+};
+
+/**
+ * Gets fallback popup HTML when template is unavailable
+ * @param {string} message - The message
+ * @param {string} type - The popup type
+ * @returns {string} HTML string
+ */
+let getFallbackPopupHTML = (message, type) => {
+  // HTML muss zu templateHTML.js ausgelagert werden!
+  console.warn("getFallbackPopupHTML sollte nicht verwendet werden!");
+  return "";
+};
+
+/**
+ * Applies styling to popup element
+ * @param {HTMLElement} popup - The popup element
+ */
+let stylePopupElement = (popup) => {
   popup.style.position = "fixed";
   popup.style.top = "50%";
   popup.style.left = "50%";
@@ -196,7 +306,6 @@ let createCheckoutPopup = (message, type) => {
   popup.style.zIndex = "10001";
   popup.style.opacity = "0";
   popup.style.transition = "opacity 0.3s ease";
-  return popup;
 };
 
 /**
@@ -241,21 +350,9 @@ let initPageLoadedListener = () => {
 };
 
 // Make globally available
-if (!window.cartEvents) {
-  window.cartEvents = {
-    initCartModal,
-    initEmptyCartButton,
-    initPageLoadedListener,
-    processCheckout,
-  };
-}
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    initCartModal,
-    initEmptyCartButton,
-    initPageLoadedListener,
-    processCheckout,
-  };
-}
+window.cartEvents = {
+  initCartModal,
+  initEmptyCartButton,
+  initPageLoadedListener,
+  processCheckout,
+};

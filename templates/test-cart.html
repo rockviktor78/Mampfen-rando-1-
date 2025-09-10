@@ -13,48 +13,83 @@
     <script>
       function testCartFunctions() {
         const result = document.getElementById("result");
+        let resultHTML = "<h2>Cart Module Test Results:</h2>";
 
         console.log("Testing cart functions...");
-        console.log("window.cartHandler:", window.cartHandler);
-        console.log("window.cartCore:", window.cartCore);
-        console.log("window.cartUI:", window.cartUI);
 
-        if (window.cartHandler) {
-          console.log("cartHandler methods:");
-          console.log("- addToCart:", typeof window.cartHandler.addToCart);
+        // Test cartCore
+        if (window.cartCore) {
+          console.log("✅ window.cartCore loaded");
+          console.log("- addToCart:", typeof window.cartCore.addToCart);
           console.log(
             "- increaseQuantity:",
-            typeof window.cartHandler.increaseQuantity
+            typeof window.cartCore.increaseQuantity
           );
-          console.log(
-            "- decreaseQuantity:",
-            typeof window.cartHandler.decreaseQuantity
-          );
-          console.log(
-            "- removeItemFromCart:",
-            typeof window.cartHandler.removeItemFromCart
-          );
+          console.log("- getCart:", typeof window.cartCore.getCart);
+          console.log("- getCartTotal:", typeof window.cartCore.getCartTotal);
+          resultHTML += "<p>✅ cartCore: Loaded</p>";
+        } else {
+          console.log("❌ window.cartCore not loaded");
+          resultHTML += "<p>❌ cartCore: Not loaded</p>";
         }
 
-        result.innerHTML = "<p>Check console for results</p>";
+        // Test cartUI
+        if (window.cartUI) {
+          console.log("✅ window.cartUI loaded");
+          console.log("- openCartModal:", typeof window.cartUI.openCartModal);
+          console.log(
+            "- renderCartItems:",
+            typeof window.cartUI.renderCartItems
+          );
+          resultHTML += "<p>✅ cartUI: Loaded</p>";
+        } else {
+          console.log("❌ window.cartUI not loaded");
+          resultHTML += "<p>❌ cartUI: Not loaded</p>";
+        }
+
+        // Test cartEvents
+        if (window.cartEvents) {
+          console.log("✅ window.cartEvents loaded");
+          console.log(
+            "- initCartModal:",
+            typeof window.cartEvents.initCartModal
+          );
+          console.log(
+            "- processCheckout:",
+            typeof window.cartEvents.processCheckout
+          );
+          resultHTML += "<p>✅ cartEvents: Loaded</p>";
+        } else {
+          console.log("❌ window.cartEvents not loaded");
+          resultHTML += "<p>❌ cartEvents: Not loaded</p>";
+        }
+
+        // Test templateHTML
+        if (window.templateHTML) {
+          console.log("✅ window.templateHTML loaded");
+          console.log(
+            "- getCartItemHTML:",
+            typeof window.templateHTML.getCartItemHTML
+          );
+          console.log(
+            "- getFABContent:",
+            typeof window.templateHTML.getFABContent
+          );
+          resultHTML += "<p>✅ templateHTML: Loaded</p>";
+        } else {
+          console.log("❌ window.templateHTML not loaded");
+          resultHTML += "<p>❌ templateHTML: Not loaded</p>";
+        }
+
+        result.innerHTML = resultHTML;
       }
     </script>
 
-    <!-- Load the modules in the same order as index.html -->
-    <script type="module" src="../scripts/includeHTML.js"></script>
-    <script type="module" src="../scripts/data.js"></script>
-    <script type="module" src="../scripts/storage.js"></script>
-
-    <!-- Cart modules -->
-    <script type="module" src="../scripts/cart-core.js"></script>
-    <script type="module" src="../scripts/cart-ui.js"></script>
-    <script type="module" src="../scripts/cart-events.js"></script>
-    <script type="module" src="../scripts/cart.js"></script>
-
-    <!-- Navigation modules -->
-    <script type="module" src="../scripts/navigation-mobile.js"></script>
-    <script type="module" src="../scripts/navigation-forms.js"></script>
-    <script type="module" src="../scripts/navigation-core.js"></script>
-    <script type="module" src="../scripts/navigation.js"></script>
+    <!-- Load only essential modules for cart testing -->
+    <script src="../scripts/templateHTML.js"></script>
+    <script src="../scripts/storage.js"></script>
+    <script src="../scripts/cart-core.js"></script>
+    <script src="../scripts/cart-ui.js"></script>
+    <script src="../scripts/cart-events.js"></script>
   </body>
 </html>

@@ -124,15 +124,10 @@ let triggerCartUIUpdate = () => {
 let removeItemFromCart = (name) => {
   let itemToRemove = cart.find((cartItem) => cartItem.name === name);
   if (itemToRemove) {
-    cartCount -= itemToRemove.quantity; // Subtract the entire quantity
+    cartCount -= itemToRemove.quantity;
     cart = cart.filter((cartItem) => cartItem.name !== name);
     updateCartDisplay();
-    if (typeof renderCartItems === "function") {
-      renderCartItems();
-    }
-    if (window.cartUI && typeof window.cartUI.renderCartItems === "function") {
-      window.cartUI.renderCartItems();
-    }
+    triggerCartUIUpdate();
   }
 };
 
@@ -143,10 +138,7 @@ let clearCart = () => {
   cart = [];
   cartCount = 0;
   updateCartDisplay();
-  // Update UI
-  if (window.cartUI && typeof window.cartUI.renderCartItems === "function") {
-    window.cartUI.renderCartItems();
-  }
+  triggerCartUIUpdate();
 };
 
 /**
@@ -357,33 +349,15 @@ let initAddButtons = () => {
 };
 
 // Make globally available
-if (!window.cartCore) {
-  window.cartCore = {
-    addToCart,
-    increaseQuantity,
-    decreaseQuantity,
-    removeItemFromCart,
-    clearCart,
-    getCart,
-    getCartTotal,
-    updateCartDisplay,
-    initAddButtons,
-    showAddToCartMessage,
-  };
-}
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    addToCart,
-    increaseQuantity,
-    decreaseQuantity,
-    removeItemFromCart,
-    clearCart,
-    getCart,
-    getCartTotal,
-    updateCartDisplay,
-    initAddButtons,
-    showAddToCartMessage,
-  };
-}
+window.cartCore = {
+  addToCart,
+  increaseQuantity,
+  decreaseQuantity,
+  removeItemFromCart,
+  clearCart,
+  getCart,
+  getCartTotal,
+  updateCartDisplay,
+  initAddButtons,
+  showAddToCartMessage,
+};

@@ -1,6 +1,6 @@
 // --- Ausgelagerte HTML-Templates ---
 
-export function getSuccessPopupHTML() {
+function getSuccessPopupHTML() {
   return `
 		<div class="success-popup_content success-popup_content--success">
 			<span class="success-popup_icon">✅</span>
@@ -9,7 +9,7 @@ export function getSuccessPopupHTML() {
 	`;
 }
 
-export function getErrorPopupHTML(message) {
+function getErrorPopupHTML(message) {
   return `
 		<div class="success-popup_content success-popup_content--error">
 			<span class="success-popup_icon">❌</span>
@@ -18,14 +18,14 @@ export function getErrorPopupHTML(message) {
 	`;
 }
 
-export function getFABContent() {
+function getFABContent() {
   return `
 		🛒
 		<span class="mobile-cart-fab_count" id="mobileCartFABCount">0</span>
 	`;
 }
 
-export function getCartItemHTML(item) {
+function getCartItemHTML(item) {
   return `
 		<div class="cart-item">
 			<div class="cart-item_info">
@@ -55,20 +55,34 @@ export function getCartItemHTML(item) {
 	`;
 }
 
-export function getAddToCartMessageHTML(itemName) {
+function getAddToCartMessageHTML(itemName) {
   return `
 		<span class="add-to-cart-message__icon">✓</span>
 		<span class="add-to-cart-message__text">${itemName} hinzugefügt</span>
 	`;
 }
 
-export function getCheckoutPopupHTML(message, type) {
+function getCheckoutPopupHTML(message, type) {
   return `
 		<div class="checkout-popup_content checkout-popup_content--${type}">
 			<span class="checkout-popup_icon">${type === "success" ? "✅" : "❌"}</span>
 			<p class="checkout-popup_text">${message}</p>
 		</div>
 	`;
+}
+
+function getDeliveryInfoHTML(cart) {
+  let orderValue = window.cartCore ? window.cartCore.getCartTotal() : 0;
+  let deliveryCost = orderValue < 25 && orderValue > 0 ? 5 : 0;
+
+  return `
+    <span>Lieferkosten:</span> ${
+      deliveryCost === 0 ? "kostenlos" : deliveryCost.toFixed(2) + " €"
+    }<br>
+    <span>Mindestbestellwert:</span> 10 €<br>
+    <strong>Ab 25 € liefern wir kostenlos.</strong><br>
+    <em>Abholung ist immer kostenfrei.</em>
+  `;
 }
 
 // Window-Export für Kompatibilität mit bestehenden Modulen
@@ -79,4 +93,5 @@ window.templateHTML = {
   getCartItemHTML,
   getAddToCartMessageHTML,
   getCheckoutPopupHTML,
+  getDeliveryInfoHTML,
 };
