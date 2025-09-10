@@ -42,16 +42,50 @@ let closeMobileMenu = () => {
  * @param {Event} event - The click event
  */
 let handleMobileMenuOutsideClick = (event) => {
+  if (shouldCloseMobileMenu(event)) {
+    closeMobileMenu();
+  }
+};
+
+/**
+ * Determines if mobile menu should close based on click
+ * @param {Event} event - The click event
+ * @returns {boolean} True if menu should close
+ */
+let shouldCloseMobileMenu = (event) => {
   let mobileMenu = document.getElementById("mobileMenu");
   let mobileMenuToggle = document.getElementById("mobileMenuToggle");
 
-  let isMenuOpen = mobileMenu.classList.contains("header_mobile-menu--open");
+  let isMenuOpen = isMobileMenuOpen(mobileMenu);
+  let clickedOutsideMenu = !isClickInsideMenu(
+    event,
+    mobileMenu,
+    mobileMenuToggle
+  );
+
+  return isMenuOpen && clickedOutsideMenu;
+};
+
+/**
+ * Checks if mobile menu is currently open
+ * @param {HTMLElement} mobileMenu - The mobile menu element
+ * @returns {boolean} True if menu is open
+ */
+let isMobileMenuOpen = (mobileMenu) => {
+  return mobileMenu.classList.contains("header_mobile-menu--open");
+};
+
+/**
+ * Checks if click was inside menu or toggle
+ * @param {Event} event - The click event
+ * @param {HTMLElement} mobileMenu - The mobile menu element
+ * @param {HTMLElement} mobileMenuToggle - The toggle button element
+ * @returns {boolean} True if click was inside menu or toggle
+ */
+let isClickInsideMenu = (event, mobileMenu, mobileMenuToggle) => {
   let clickedInsideMenu = mobileMenu.contains(event.target);
   let clickedToggle = mobileMenuToggle.contains(event.target);
-
-  if (isMenuOpen && !clickedInsideMenu && !clickedToggle) {
-    closeMobileMenu();
-  }
+  return clickedInsideMenu || clickedToggle;
 };
 
 /**
@@ -80,23 +114,10 @@ let closeMenuIfNavigating = () => {
 };
 
 // Make globally available
-if (!window.navigationMobile) {
-  window.navigationMobile = {
-    toggleMobileMenu,
-    openMobileMenu,
-    closeMobileMenu,
-    initMobileNavigation,
-    closeMenuIfNavigating,
-  };
-}
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    toggleMobileMenu,
-    openMobileMenu,
-    closeMobileMenu,
-    initMobileNavigation,
-    closeMenuIfNavigating,
-  };
-}
+window.navigationMobile = {
+  toggleMobileMenu,
+  openMobileMenu,
+  closeMobileMenu,
+  initMobileNavigation,
+  closeMenuIfNavigating,
+};

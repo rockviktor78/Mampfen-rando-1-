@@ -60,19 +60,62 @@ let navigateToBasket = () => {
  * @param {string} pageName - Name of the page
  */
 let loadContent = async (templatePath, pageName) => {
-  if (!navigationContentContainer) return;
+  if (!validateContentContainer()) return;
 
-  let response = await fetch(templatePath);
-  if (response.ok) {
-    let html = await response.text();
-    navigationContentContainer.innerHTML = html;
-    navigationCurrentPage = pageName;
-
-    updateActiveStates();
-    triggerPageLoadedEvent(pageName);
-    handleMenuPageFAB(pageName);
+  let contentData = await fetchTemplateContent(templatePath);
+  if (contentData.success) {
+    updatePageContent(contentData.html, pageName);
+    executePostLoadActions(pageName);
   }
 
+  closeMobileMenuIfOpen();
+};
+
+/**
+ * Validates that content container exists
+ * @returns {boolean} True if container is available
+ */
+let validateContentContainer = () => {
+  return !!navigationContentContainer;
+};
+
+/**
+ * Fetches template content from given path
+ * @param {string} templatePath - Path to the template
+ * @returns {Object} Result object with success and html
+ */
+let fetchTemplateContent = async (templatePath) => {
+  let response = await fetch(templatePath);
+  return {
+    success: response.ok,
+    html: response.ok ? await response.text() : "",
+  };
+};
+
+/**
+ * Updates page content and navigation state
+ * @param {string} html - HTML content to set
+ * @param {string} pageName - Name of the page
+ */
+let updatePageContent = (html, pageName) => {
+  navigationContentContainer.innerHTML = html;
+  navigationCurrentPage = pageName;
+};
+
+/**
+ * Executes post-load actions for the page
+ * @param {string} pageName - Name of the loaded page
+ */
+let executePostLoadActions = (pageName) => {
+  updateActiveStates();
+  triggerPageLoadedEvent(pageName);
+  handleMenuPageFAB(pageName);
+};
+
+/**
+ * Closes mobile menu if navigation is happening
+ */
+let closeMobileMenuIfOpen = () => {
   if (window.navigationMobile) {
     window.navigationMobile.closeMenuIfNavigating();
   }
@@ -94,10 +137,35 @@ let triggerPageLoadedEvent = (pageName) => {
  * @param {string} pageName - The name of the loaded page
  */
 let handleMenuPageFAB = (pageName) => {
-  if (pageName === "menu" && window.cartHandler) {
-    setTimeout(() => {
-      window.cartHandler.showMobileCartFAB();
-    }, 100);
+  if (isMenuPage(pageName) && window.cartUI) {
+    scheduleCartFABDisplay();
+  }
+};
+
+/**
+ * Checks if the current page is menu
+ * @param {string} pageName - The page name to check
+ * @returns {boolean} True if it is menu page
+ */
+let isMenuPage = (pageName) => {
+  return pageName === "menu";
+};
+
+/**
+ * Schedules cart FAB display with delay
+ */
+let scheduleCartFABDisplay = () => {
+  setTimeout(() => {
+    showCartFABIfAvailable();
+  }, 100);
+};
+
+/**
+ * Shows cart FAB if available
+ */
+let showCartFABIfAvailable = () => {
+  if (window.cartUI && window.cartUI.showMobileCartFAB) {
+    window.cartUI.showMobileCartFAB();
   }
 };
 
@@ -105,27 +173,67 @@ let handleMenuPageFAB = (pageName) => {
  * Updates active navigation button states
  */
 let updateActiveStates = () => {
+  resetAllActiveStates();
+  setActiveStateForCurrentPage();
+};
+
+/**
+ * Resets active states for all navigation buttons
+ */
+let resetAllActiveStates = () => {
   document
     .querySelectorAll(".header_nav-btn, .header_mobile-btn")
     .forEach((btn) => {
       btn.classList.remove("active");
     });
+};
 
-  let activeButtons = {
+/**
+ * Sets active state for current page buttons
+ */
+let setActiveStateForCurrentPage = () => {
+  let activeButtons = getActiveButtonsForPage(navigationCurrentPage);
+  if (activeButtons) {
+    activateButtons(activeButtons);
+  }
+};
+
+/**
+ * Gets button IDs for a specific page
+ * @param {string} pageName - The page name
+ * @returns {Array|null} Array of button IDs or null
+ */
+let getActiveButtonsForPage = (pageName) => {
+  let buttonMappings = {
     home: ["homeBtn", "mobileHomeBtn"],
     menu: ["menuBtn", "mobileMenuBtn"],
     about: ["aboutBtn", "mobileAboutBtn"],
     contact: ["contactBtn", "mobileContactBtn"],
   };
 
-  if (activeButtons[navigationCurrentPage]) {
-    activeButtons[navigationCurrentPage].forEach((btnId) => {
-      let btn = document.getElementById(btnId);
-      if (btn && !btn.classList.contains("header_nav-btn--basket")) {
-        btn.classList.add("active");
-      }
-    });
-  }
+  return buttonMappings[pageName] || null;
+};
+
+/**
+ * Activates buttons by their IDs
+ * @param {Array} buttonIds - Array of button IDs
+ */
+let activateButtons = (buttonIds) => {
+  buttonIds.forEach((btnId) => {
+    let btn = document.getElementById(btnId);
+    if (shouldActivateButton(btn)) {
+      btn.classList.add("active");
+    }
+  });
+};
+
+/**
+ * Checks if a button should be activated
+ * @param {HTMLElement} btn - The button element
+ * @returns {boolean} True if button should be activated
+ */
+let shouldActivateButton = (btn) => {
+  return btn && !btn.classList.contains("header_nav-btn--basket");
 };
 
 /**
@@ -217,33 +325,15 @@ let initDynamicEventListeners = () => {
 };
 
 // Make globally available
-if (!window.navigationCore) {
-  window.navigationCore = {
-    navigateToHome,
-    navigateToMenu,
-    navigateToAbout,
-    navigateToContact,
-    navigateToPrivacy,
-    navigateToBasket,
-    navigateToMenuCategory,
-    initContentContainer,
-    initNavigationEventListeners,
-    initDynamicEventListeners,
-  };
-}
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    navigateToHome,
-    navigateToMenu,
-    navigateToAbout,
-    navigateToContact,
-    navigateToPrivacy,
-    navigateToBasket,
-    navigateToMenuCategory,
-    initContentContainer,
-    initNavigationEventListeners,
-    initDynamicEventListeners,
-  };
-}
+window.navigationCore = {
+  navigateToHome,
+  navigateToMenu,
+  navigateToAbout,
+  navigateToContact,
+  navigateToPrivacy,
+  navigateToBasket,
+  navigateToMenuCategory,
+  initContentContainer,
+  initNavigationEventListeners,
+  initDynamicEventListeners,
+};

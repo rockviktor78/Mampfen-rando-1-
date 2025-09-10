@@ -29,23 +29,14 @@ let handleContactFormSubmit = (e) => {
  * @returns {boolean} True if valid, false otherwise
  */
 let validateContactForm = (contactForm) => {
-  let nameInput = contactForm.querySelector('input[placeholder="Name"]');
-  let emailInput = contactForm.querySelector('input[placeholder="E-Mail"]');
-  let messageInput = contactForm.querySelector(
-    'textarea[placeholder="Nachricht"]'
-  );
+  let formInputs = getFormInputs(contactForm);
 
-  if (
-    !nameInput.value.trim() ||
-    !emailInput.value.trim() ||
-    !messageInput.value.trim()
-  ) {
+  if (!validateRequiredFields(formInputs)) {
     showErrorPopup("Bitte füllen Sie alle Felder aus!");
     return false;
   }
 
-  let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(emailInput.value.trim())) {
+  if (!validateEmailFormat(formInputs.email)) {
     showErrorPopup("Bitte geben Sie eine gültige E-Mail-Adresse ein!");
     return false;
   }
@@ -54,43 +45,117 @@ let validateContactForm = (contactForm) => {
 };
 
 /**
+ * Gets form input elements
+ * @param {HTMLFormElement} contactForm - The contact form
+ * @returns {Object} Object with form inputs
+ */
+let getFormInputs = (contactForm) => {
+  return {
+    name: contactForm.querySelector('input[placeholder="Name"]'),
+    email: contactForm.querySelector('input[placeholder="E-Mail"]'),
+    message: contactForm.querySelector('textarea[placeholder="Nachricht"]'),
+  };
+};
+
+/**
+ * Validates required fields are filled
+ * @param {Object} formInputs - Object with form inputs
+ * @returns {boolean} True if all fields are filled
+ */
+let validateRequiredFields = (formInputs) => {
+  return (
+    formInputs.name.value.trim() &&
+    formInputs.email.value.trim() &&
+    formInputs.message.value.trim()
+  );
+};
+
+/**
+ * Validates email format
+ * @param {HTMLInputElement} emailInput - The email input element
+ * @returns {boolean} True if email format is valid
+ */
+let validateEmailFormat = (emailInput) => {
+  let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(emailInput.value.trim());
+};
+
+/**
  * Processes the form submission
  * @param {HTMLButtonElement} formBtn - The submit button
  * @param {HTMLFormElement} contactForm - The contact form
  */
 let processContactFormSubmission = async (formBtn, contactForm) => {
-  formBtn.textContent = "Wird gesendet...";
-  formBtn.disabled = true;
+  setFormSubmittingState(formBtn);
 
   try {
-    // Create FormData from the form
-    const formData = new FormData(contactForm);
-
-    // Send to Formspree
-    const response = await fetch(contactForm.action, {
-      method: contactForm.method,
-      body: formData,
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    if (response.ok) {
-      showSuccessPopup();
-      contactForm.reset();
-      // showFormStatus("✅ Nachricht erfolgreich gesendet!", "success");
+    let success = await submitFormToService(contactForm);
+    if (success) {
+      handleFormSubmissionSuccess(contactForm);
     } else {
-      const data = await response.json();
-      throw new Error(data.error || "Server error");
+      handleFormSubmissionError();
     }
   } catch (error) {
     console.error("Form submission error:", error);
-    showErrorPopup("Fehler beim Senden. Bitte erneut versuchen.");
-    // showFormStatus("❌ Fehler beim Senden. Bitte erneut versuchen.", "error");
+    handleFormSubmissionError();
   } finally {
-    formBtn.textContent = "Senden";
-    formBtn.disabled = false;
+    resetFormSubmittingState(formBtn);
   }
+};
+
+/**
+ * Sets form to submitting state
+ * @param {HTMLButtonElement} formBtn - The submit button
+ */
+let setFormSubmittingState = (formBtn) => {
+  formBtn.textContent = "Wird gesendet...";
+  formBtn.disabled = true;
+};
+
+/**
+ * Submits form to external service
+ * @param {HTMLFormElement} contactForm - The contact form
+ * @returns {boolean} True if submission was successful
+ */
+let submitFormToService = async (contactForm) => {
+  let formData = new FormData(contactForm);
+  let response = await fetch(contactForm.action, {
+    method: contactForm.method,
+    body: formData,
+    headers: { Accept: "application/json" },
+  });
+
+  if (!response.ok) {
+    let data = await response.json();
+    throw new Error(data.error || "Server error");
+  }
+
+  return true;
+};
+
+/**
+ * Handles successful form submission
+ * @param {HTMLFormElement} contactForm - The contact form
+ */
+let handleFormSubmissionSuccess = (contactForm) => {
+  showSuccessPopup();
+  contactForm.reset();
+};
+
+/**
+ * Handles form submission error
+ */
+let handleFormSubmissionError = () => {
+  showErrorPopup("Fehler beim Senden. Bitte erneut versuchen.");
+};
+
+/**
+ * Resets form from submitting state
+ * @param {HTMLButtonElement} formBtn - The submit button
+ */
+let resetFormSubmittingState = (formBtn) => {
+  formBtn.textContent = "Senden";
+  formBtn.disabled = false;
 };
 
 /**
@@ -118,18 +183,7 @@ let showFormStatus = (message, type) => {
  * Shows a success popup
  */
 let showSuccessPopup = () => {
-  let popup = document.createElement("div");
-  popup.className = "success-popup";
-  if (window.templateHTML && window.templateHTML.getSuccessPopupHTML) {
-    popup.innerHTML = window.templateHTML.getSuccessPopupHTML();
-  } else {
-    popup.innerHTML = `
-      <div class="success-popup_content success-popup_content--success">
-        <span class="success-popup_icon">✅</span>
-        <p class="success-popup_text">Nachricht erfolgreich gesendet!</p>
-      </div>
-    `;
-  }
+  let popup = createSuccessPopupElement();
   showPopup(popup);
 };
 
@@ -138,19 +192,56 @@ let showSuccessPopup = () => {
  * @param {string} message - The error message
  */
 let showErrorPopup = (message) => {
+  let popup = createErrorPopupElement(message);
+  showPopup(popup);
+};
+
+/**
+ * Creates success popup element
+ * @returns {HTMLElement} The success popup element
+ */
+let createSuccessPopupElement = () => {
   let popup = document.createElement("div");
   popup.className = "success-popup";
+  setSuccessPopupContent(popup);
+  return popup;
+};
+
+/**
+ * Creates error popup element
+ * @param {string} message - The error message
+ * @returns {HTMLElement} The error popup element
+ */
+let createErrorPopupElement = (message) => {
+  let popup = document.createElement("div");
+  popup.className = "success-popup";
+  setErrorPopupContent(popup, message);
+  return popup;
+};
+
+/**
+ * Sets success popup content
+ * @param {HTMLElement} popup - The popup element
+ */
+let setSuccessPopupContent = (popup) => {
+  if (window.templateHTML && window.templateHTML.getSuccessPopupHTML) {
+    popup.innerHTML = window.templateHTML.getSuccessPopupHTML();
+  } else {
+    console.warn("templateHTML.getSuccessPopupHTML not available!");
+  }
+};
+
+/**
+ * Sets error popup content
+ * @param {HTMLElement} popup - The popup element
+ * @param {string} message - The error message
+ */
+let setErrorPopupContent = (popup, message) => {
   if (window.templateHTML && window.templateHTML.getErrorPopupHTML) {
     popup.innerHTML = window.templateHTML.getErrorPopupHTML(message);
   } else {
-    popup.innerHTML = `
-      <div class="success-popup_content success-popup_content--error">
-        <span class="success-popup_icon">❌</span>
-        <p class="success-popup_text">${message}</p>
-      </div>
-    `;
+    console.warn("templateHTML.getErrorPopupHTML not available!");
   }
-  showPopup(popup);
 };
 
 /**
@@ -273,25 +364,11 @@ let initHeroButton = () => {
 };
 
 // Make globally available
-if (!window.navigationForms) {
-  window.navigationForms = {
-    initContactForm,
-    initFeatureCards,
-    initHeroButton,
-    showSuccessPopup,
-    showErrorPopup,
-    showFormStatus,
-  };
-}
-
-// Export for modules
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    initContactForm,
-    initFeatureCards,
-    initHeroButton,
-    showSuccessPopup,
-    showErrorPopup,
-    showFormStatus,
-  };
-}
+window.navigationForms = {
+  initContactForm,
+  initFeatureCards,
+  initHeroButton,
+  showSuccessPopup,
+  showErrorPopup,
+  showFormStatus,
+};
