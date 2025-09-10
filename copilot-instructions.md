@@ -12,6 +12,7 @@
 - Immer `let` oder `const` verwenden, niemals `var`.
 - HTML-Tag Elemente immer zum stylen mit class="" versehen, niemals ohne.
 
+
 ## JavaScript-Datei-Beschränkungen
 
 - **Maximale Dateigröße**: Jede JavaScript-Datei darf maximal 399 Zeilen lang sein.
