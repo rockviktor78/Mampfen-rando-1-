@@ -149,7 +149,7 @@
 }
 
 .cart-item_single-price {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #593f3a;
   font-weight: 400;
 }
@@ -315,7 +315,7 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.3s ease;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   white-space: nowrap;
   max-width: 250px;
@@ -335,7 +335,7 @@
 }
 
 .add-to-cart-message__text {
-  font-size: 0.875rem;
+  font-size: 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -347,7 +347,7 @@
     right: 4px !important;
     width: calc(100vw - 8px) !important;
     max-width: none !important;
-    font-size: 0.75rem;
+    font-size: 1rem;
     padding: 0.5rem 0.75rem;
     white-space: normal;
     text-align: center;
@@ -385,12 +385,12 @@
 
   .add-to-cart-message {
     max-width: 200px;
-    font-size: 0.8rem;
+    font-size: 1rem;
     padding: 0.6rem 0.8rem;
   }
 
   .add-to-cart-message__text {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 
   .checkout-popup_content {
@@ -404,7 +404,7 @@
 
 
   .add-to-cart-message__text {
-    font-size: 0.75rem;
+    font-size: 1rem;
   }
 
   .checkout-popup_content {

@@ -1,0 +1,26 @@
+CSS-Dateien die auf problematische Schriftgrößen überprüft werden müssen:
+
+Problematische Schriftgrößen (unter 16px):
+- font-size: 0.75rem; /* = 12px */
+- font-size: 0.875rem; /* = 14px */
+- font-size: 14px;
+- font-size: 12px;
+- font-size: 13px;
+- font-size: 15px;
+
+Zu überprüfende Dateien:
+1. styles/global.css
+2. styles/layout.css
+3. styles/components/header.css
+4. styles/components/footer.css
+5. styles/components/buttons.css
+6. styles/components/cards.css
+7. styles/components/forms.css
+8. styles/components/cart.css
+9. styles/components/navigation.css
+10. styles/pages/home.css
+11. styles/pages/menu.css
+12. styles/pages/basket.css
+13. styles/pages/order.css
+
+Alle gefundenen Schriftgrößen unter 16px sollen auf 1rem geändert werden.

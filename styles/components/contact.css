@@ -281,11 +281,11 @@
   }
 
   .contact_item h4 {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .contact_item p {
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
 
   .contact_form {
@@ -300,12 +300,12 @@
 
   .form_input,
   .form_textarea {
-    font-size: 0.85rem;
+    font-size: 1rem;
     padding: 0.4rem;
   }
 
   .form_btn {
-    font-size: 0.85rem;
+    font-size: 1rem;
     padding: 0.5rem 0.8rem;
   }
 
@@ -350,7 +350,7 @@
   }
 
   .contact_item p {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .contact_form {
@@ -365,12 +365,12 @@
 
   .form_input,
   .form_textarea {
-    font-size: 0.9rem;
+    font-size: 1rem;
     padding: 0.5rem;
   }
 
   .form_btn {
-    font-size: 0.9rem;
+    font-size: 1rem;
     padding: 0.6rem 1rem;
   }
 
@@ -384,7 +384,7 @@
   .success-popup_content {
     max-width: 280px;
     padding: 0.75rem 1rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 }
 

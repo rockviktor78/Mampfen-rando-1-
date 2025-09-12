@@ -54,7 +54,7 @@
   align-items: center;
   gap: 0.5rem;
   color: #b7807c;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .contact_icon {
@@ -70,7 +70,7 @@
 
 .opening_hours p {
   color: #b7807c;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .opening_hours strong {
@@ -129,7 +129,7 @@
 
 .footer_legal p {
   color: #b7807c;
-  font-size: 0.9rem;
+  font-size:1rem;
   margin: 0;
 }
 
@@ -141,7 +141,7 @@
 .legal_link {
   color: #b7807c;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
   transition: color 0.3s ease;
 }
 
